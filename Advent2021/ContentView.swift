@@ -13,6 +13,7 @@ struct ContentView: View {
             List {
                 NavigationLink("Day One", destination: Day1View())
                 NavigationLink("Day Two", destination: Day2View())
+                NavigationLink("Day Three", destination: Day3View())
             }.navigationTitle("Advent of code 2021")
         }
     }
