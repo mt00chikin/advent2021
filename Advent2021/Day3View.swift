@@ -96,9 +96,8 @@ struct Day3View: View {
         var results: [String] = input
         var index = 0
         repeat {
-            let grid = results.map { Array($0) }
-            let items = grid.map { String($0[index]) }
-            let counts = items.reduce(into: [:]) { $0[$1, default: 0] += 1 }
+            let bits = results.map { String($0[$0.index($0.startIndex, offsetBy: index)]) }
+            let counts = bits.reduce(into: [:]) { $0[$1, default: 0] += 1 }
             let bitCriteria: String
             if counts["1"]! >= counts["0"]! {
                 // Grab all results that have a 1 at the current index
@@ -121,9 +120,8 @@ struct Day3View: View {
         var results: [String] = input
         var index = 0
         repeat {
-            let grid = results.map { Array($0) }
-            let items = grid.map { String($0[index]) }
-            let counts = items.reduce(into: [:]) { $0[$1, default: 0] += 1 }
+            let bits = results.map { String($0[$0.index($0.startIndex, offsetBy: index)]) }
+            let counts = bits.reduce(into: [:]) { $0[$1, default: 0] += 1 }
             let bitCriteria: String
             if counts["0"]! <= counts["1"]! {
                 // Grab all results that have a 1 at the current index
