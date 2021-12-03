@@ -14,6 +14,10 @@ struct Day3View: View {
 
     let logger = Logger()
 
+    let solver = Day3Solver(input: Day3Input.input
+                                .trimmingCharacters(in: .whitespacesAndNewlines)
+                                .components(separatedBy: .newlines))
+
     var body: some View {
         VStack(spacing: 16) {
             Button("Solve part 1") {
@@ -41,11 +45,7 @@ struct Day3View: View {
     }
 
     private func solvePartOne() {
-        let input = Day3Input.input
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .components(separatedBy: .newlines)
-
-        let result = findGammaAndEpsilon(input: input)
+        let result = solver.findGammaAndEpsilon()
 
         let gammaDecimal = Int(result.gamma, radix: 2)!
         logger.debug("Gamma binary: \(result.gamma), decimal:\(gammaDecimal)")
@@ -57,87 +57,13 @@ struct Day3View: View {
     }
 
     private func solvePartTwo() {
-        let input = Day3Input.input
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .components(separatedBy: .newlines)
-
-        let oxygenGeneratorRating = determineOxygenGeneratorRating(input: input)
-        let co2scrubberRating = determineCO2ScrubberRating(input: input)
+        let oxygenGeneratorRating = solver.determineOxygenGeneratorRating()
+        let co2scrubberRating = solver.determineCO2ScrubberRating()
 
         let oxygenGeneratorRatingDecimal = Int(oxygenGeneratorRating, radix: 2)!
         let co2scrubberRatingDecimal = Int(co2scrubberRating, radix: 2)!
 
         partTwoAnswer = oxygenGeneratorRatingDecimal * co2scrubberRatingDecimal
-    }
-
-    private func findGammaAndEpsilon(input: [String]) -> (gamma: String, epsilon: String) {
-        let grid = input.map { Array($0) }
-        let length = grid.map { $0.count }.max() ?? .zero
-
-        var gamma: String = ""
-        var epsilon: String = ""
-        for i in 0..<length {
-            let items = grid.map { String($0[i]) }
-            let counts = items.reduce(into: [:]) { $0[$1, default: 0] += 1 }
-            if counts["0"]! > counts["1"]! {
-                gamma.append("0")
-                epsilon.append("1")
-            } else {
-                gamma.append("1")
-                epsilon.append("0")
-            }
-        }
-
-        print("Gamma: \(gamma). Epsilon \(epsilon)")
-        return (gamma, epsilon)
-    }
-
-    private func determineOxygenGeneratorRating(input: [String]) -> String {
-        var results: [String] = input
-        var index = 0
-        repeat {
-            let bits = results.map { String($0[$0.index($0.startIndex, offsetBy: index)]) }
-            let counts = bits.reduce(into: [:]) { $0[$1, default: 0] += 1 }
-            let bitCriteria: String
-            if counts["1"]! >= counts["0"]! {
-                // Grab all results that have a 1 at the current index
-                bitCriteria = "1"
-            } else {
-                bitCriteria = "0"
-            }
-
-            results = results.filter({ row in
-                String(row[row.index(row.startIndex, offsetBy: index)]) == bitCriteria
-            })
-
-            index = index + 1
-        } while results.count > 1
-
-        return results.first!
-    }
-
-    private func determineCO2ScrubberRating(input: [String]) -> String {
-        var results: [String] = input
-        var index = 0
-        repeat {
-            let bits = results.map { String($0[$0.index($0.startIndex, offsetBy: index)]) }
-            let counts = bits.reduce(into: [:]) { $0[$1, default: 0] += 1 }
-            let bitCriteria: String
-            if counts["0"]! <= counts["1"]! {
-                // Grab all results that have a 1 at the current index
-                bitCriteria = "0"
-            } else {
-                bitCriteria = "1"
-            }
-
-            results = results.filter({ row in
-                String(row[row.index(row.startIndex, offsetBy: index)]) == bitCriteria
-            })
-
-            index = index + 1
-        } while results.count > 1
-
-        return results.first!
     }
 }
 
@@ -147,7 +73,7 @@ struct Day3View_Previews: PreviewProvider {
     }
 }
 
-private struct Day3Input {
+struct Day3Input {
     static let input = """
 111011110101
 011000111010
